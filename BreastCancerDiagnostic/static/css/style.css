@@ -1,0 +1,176 @@
+/* Base and Typography */
+body {
+    font-family: 'Outfit', sans-serif;
+    background-color: #f4f6f9;
+    color: #212529;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
+}
+
+/* Colors and Brand Identity */
+.bg-teal {
+    background-color: #0b6666 !important;
+}
+
+.text-teal {
+    color: #0b6666 !important;
+}
+
+.btn-teal {
+    background-color: #0b6666;
+    color: #ffffff;
+    border: none;
+    transition: all 0.25s ease-in-out;
+}
+
+.btn-teal:hover {
+    background-color: #084c4c;
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(11, 102, 102, 0.25);
+}
+
+.btn-outline-teal {
+    border: 2px solid #0b6666;
+    color: #0b6666;
+    background: transparent;
+    transition: all 0.25s ease-in-out;
+}
+
+.btn-outline-teal:hover {
+    background-color: #0b6666;
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(11, 102, 102, 0.2);
+}
+
+/* Custom Nav links */
+.navbar-dark .navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    transition: color 0.2s ease;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover,
+.navbar-dark .navbar-nav .nav-link.active {
+    color: #ffc107 !important;
+}
+
+/* Hero card design */
+.hero-card {
+    background: linear-gradient(135deg, #0b6666 0%, #15928a 100%);
+    position: relative;
+}
+
+.hero-card::after {
+    content: '';
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 50%;
+    top: -50px;
+    right: -50px;
+    z-index: 0;
+}
+
+/* Card hover and visual polish */
+.card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Custom form inputs style */
+.form-control:focus, .form-select:focus {
+    border-color: #15928a;
+    box-shadow: 0 0 0 0.25rem rgba(21, 146, 138, 0.25);
+}
+
+/* Sub-headings */
+h5.border-bottom {
+    border-bottom: 2px solid #e9ecef !important;
+}
+
+/* Diagnosis Colors */
+.bg-success-subtle {
+    background-color: #d1e7dd !important;
+}
+
+.bg-danger-subtle {
+    background-color: #f8d7da !important;
+}
+
+.bg-primary-subtle {
+    background-color: #cfe2ff !important;
+}
+
+/* Animations */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.08);
+        opacity: 0.85;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.animate-pulse {
+    animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+.animate-bounce {
+    animation: bounce 3s infinite ease-in-out;
+}
+
+.opacity-90 {
+    opacity: 0.90;
+}
+
+.opacity-95 {
+    opacity: 0.95;
+}
+
+.opacity-20 {
+    opacity: 0.20;
+}
+
+/* Table styles */
+.table th {
+    font-weight: 600;
+}
+
+/* Detail Badge Styles */
+.badge {
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.35em 0.65em;
+}
+
+.footer {
+    background-color: #1e252b !important;
+}

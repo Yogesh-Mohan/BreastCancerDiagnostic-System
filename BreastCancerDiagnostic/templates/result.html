@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Diagnosis result card -->
+            <div class="card border-0 shadow-sm rounded-3 bg-white p-4 mb-4">
+                <div class="text-center mb-4">
+                    <h2 class="fw-bold mb-1 text-dark">Diagnostic Analysis Report</h2>
+                    <span class="text-muted small">Report ID: BCDS-{{ "%06d"|format(record.id) }} | Generated: {{ record.timestamp }}</span>
+                </div>
+
+                <div class="row g-4 align-items-center mb-4">
+                    <!-- Left: Result details -->
+                    <div class="col-md-7">
+                        <div class="p-4 rounded-3 text-white {% if record.prediction == 'Malignant' %}bg-danger{% else %}bg-success{% endif %}">
+                            <h6 class="text-uppercase tracking-wider fw-semibold opacity-90 mb-1">Diagnostic Prognosis</h6>
+                            <h2 class="fw-bold mb-3 d-flex align-items-center">
+                                {% if record.prediction == 'Malignant' %}
+                                <i class="bi bi-exclamation-triangle-fill me-2 fs-1 animate-pulse"></i> Malignant Tumor
+                                {% else %}
+                                <i class="bi bi-check-circle-fill me-2 fs-1"></i> Benign Tumor
+                                {% endif %}
+                            </h2>
+                            <p class="mb-0 opacity-95">
+                                {% if record.prediction == 'Malignant' %}
+                                Warning: The cellular nuclei analysis indicates malignant cell proliferation characteristics. Triage this case for immediate gold-standard biopsy validation.
+                                {% else %}
+                                Analysis indicates typical non-invasive breast tissue characteristics. The tumor is categorized as benign. Continue routine preventive mammography schedules.
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Right: Confidence details -->
+                    <div class="col-md-5">
+                        <div class="card bg-light border-0 p-4 h-100 text-center rounded-3">
+                            <h6 class="text-uppercase tracking-wider fw-semibold text-muted mb-2">Confidence Level</h6>
+                            <h1 class="display-3 fw-bold mb-2 {% if record.prediction == 'Malignant' %}text-danger{% else %}text-success{% endif %}">
+                                {{ "%.2f"|format(record.confidence) }}%
+                            </h1>
+                            <div class="progress mb-2" style="height: 10px;">
+                                {%- set conf_val = record.confidence -%}
+                                <div id="confidence-bar"
+                                     class="progress-bar {% if record.prediction == 'Malignant' %}bg-danger{% else %}bg-success{% endif %}"
+                                     role="progressbar"
+                                     aria-valuenow="{{ conf_val }}"
+                                     aria-valuemin="0"
+                                     aria-valuemax="100">
+                                </div>
+                            </div>
+                            <script>
+                                document.getElementById("confidence-bar").style.width = "{{ conf_val }}%";
+                            </script>
+                            <span class="small text-muted">Machine learning categorization probability.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Patient metadata -->
+                <h5 class="fw-bold text-teal border-bottom pb-2 mb-3">
+                    <i class="bi bi-person-badge-fill me-1"></i> Patient Metadata
+                </h5>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <strong>Patient Name:</strong> <span class="ms-1">{{ record.patient_name }}</span>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Patient Record ID / Chart #:</strong> <span class="ms-1">{{ record.patient_id }}</span>
+                    </div>
+                </div>
+
+                <!-- Feature list table -->
+                <h5 class="fw-bold text-teal border-bottom pb-2 mb-3">
+                    <i class="bi bi-file-earmark-spreadsheet-fill me-1"></i> Feature Metric Details
+                </h5>
+                <div class="table-responsive mb-4">
+                    <table class="table table-bordered table-striped align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Measured Feature Parameter</th>
+                                <th>Input Value</th>
+                                <th>Assessment</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Radius Mean</td>
+                                <td class="fw-semibold">{{ "%.4f"|format(record.radius_mean) }} μm</td>
+                                <td>Average distance from center to perimeter points.</td>
+                            </tr>
+                            <tr>
+                                <td>Texture Mean</td>
+                                <td class="fw-semibold">{{ "%.4f"|format(record.texture_mean) }} gray-scale stddev</td>
+                                <td>Nuclei texture roughness standard deviation.</td>
+                            </tr>
+                            <tr>
+                                <td>Perimeter Mean</td>
+                                <td class="fw-semibold">{{ "%.4f"|format(record.perimeter_mean) }} μm</td>
+                                <td>Total boundary perimeter of cell nuclei.</td>
+                            </tr>
+                            <tr>
+                                <td>Area Mean</td>
+                                <td class="fw-semibold">{{ "%.2f"|format(record.area_mean) }} μm²</td>
+                                <td>Total surface area of cell nuclei.</td>
+                            </tr>
+                            <tr>
+                                <td>Smoothness Mean</td>
+                                <td class="fw-semibold">{{ "%.4f"|format(record.smoothness_mean) }}</td>
+                                <td>Local variation in cell radius lengths.</td>
+                            </tr>
+                            <tr>
+                                <td>Compactness Mean</td>
+                                <td class="fw-semibold">{{ "%.4f"|format(record.compactness_mean) }}</td>
+                                <td>Computed as perimeter² / area - 1.0.</td>
+                            </tr>
+                            <tr>
+                                <td>Concavity Mean</td>
+                                <td class="fw-semibold">{{ "%.4f"|format(record.concavity_mean) }}</td>
+                                <td>Severity of concave segments of the contour.</td>
+                            </tr>
+                            <tr>
+                                <td>Concave Points Mean</td>
+                                <td class="fw-semibold">{{ "%.4f"|format(record.concave_points_mean) }}</td>
+                                <td>Number of concave portions on contour.</td>
+                            </tr>
+                            <tr>
+                                <td>Symmetry Mean</td>
+                                <td class="fw-semibold">{{ "%.4f"|format(record.symmetry_mean) }}</td>
+                                <td>Nuclei structural symmetry comparison.</td>
+                            </tr>
+                            <tr>
+                                <td>Fractal Dimension Mean</td>
+                                <td class="fw-semibold">{{ "%.4f"|format(record.fractal_dimension_mean) }}</td>
+                                <td>"Coastline approximation" complexity measurement.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Disclaimer box -->
+                <div class="alert alert-secondary d-flex align-items-start shadow-sm mb-4" role="alert">
+                    <i class="bi bi-info-circle-fill fs-5 me-3 text-secondary mt-1"></i>
+                    <div>
+                        <strong class="text-dark d-block mb-1">Clinical Disclaimer</strong>
+                        <p class="small text-muted mb-0">This machine learning evaluation is an assistive diagnostic triage mechanism. It is NOT a substitute for formal clinical biopsy validation. All malignant findings must be validated immediately with golden-standard histopathological biopsy processes.</p>
+                    </div>
+                </div>
+
+                <!-- Action buttons -->
+                <div class="d-grid d-md-flex justify-content-md-between gap-2 border-top pt-4">
+                    <a href="{{ url_for('predict') }}" class="btn btn-outline-teal px-4">
+                        <i class="bi bi-arrow-left me-1"></i> Start New Analysis
+                    </a>
+                    <div class="d-grid d-md-flex gap-2">
+                        <a href="{{ url_for('admin') }}" class="btn btn-outline-secondary px-4">
+                            <i class="bi bi-file-medical me-1"></i> View Records Dashboard
+                        </a>
+                        <a href="{{ url_for('download_pdf', record_id=record.id) }}" class="btn btn-teal px-4 fw-bold shadow-sm">
+                            <i class="bi bi-file-earmark-pdf-fill me-1"></i> Download PDF Report
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

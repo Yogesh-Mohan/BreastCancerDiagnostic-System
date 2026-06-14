@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-3 align-items-center">
+        <div class="col-md-6">
+            <h3 class="fw-bold text-dark">
+                <i class="bi bi-file-medical text-teal me-2"></i> Patient Diagnosis Records
+            </h3>
+            <p class="text-muted mb-0">Browse, search, filter, and export historical diagnostic triage prognoses.</p>
+        </div>
+        <div class="col-md-6 text-md-end mt-3 mt-md-0">
+            <a href="{{ url_for('export_csv', search=search, prediction=prediction_filter) }}" class="btn btn-teal fw-semibold shadow-sm">
+                <i class="bi bi-file-earmark-arrow-down-fill me-1"></i> Export Records to CSV
+            </a>
+        </div>
+    </div>
+
+    <!-- Filter Card -->
+    <div class="card border-0 shadow-sm rounded-3 bg-white p-3 mb-4">
+        <form action="{{ url_for('admin') }}" method="GET" class="row g-3">
+            <div class="col-md-5">
+                <label for="search" class="form-label small fw-bold text-muted">Search Patient</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-search"></i></span>
+                    <input type="text" class="form-control border-start-0" id="search" name="search" value="{{ search }}" placeholder="Search by name or chart number...">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <label for="prediction" class="form-label small fw-bold text-muted">Filter by Diagnosis</label>
+                <select class="form-select" id="prediction" name="prediction">
+                    <option value="" {% if not prediction_filter %}selected{% endif %}>All Diagnoses</option>
+                    <option value="Benign" {% if prediction_filter == 'Benign' %}selected{% endif %}>Benign Only</option>
+                    <option value="Malignant" {% if prediction_filter == 'Malignant' %}selected{% endif %}>Malignant Only</option>
+                </select>
+            </div>
+            <div class="col-md-3 d-flex align-items-end gap-2">
+                <button type="submit" class="btn btn-teal w-100 fw-bold">Filter</button>
+                <a href="{{ url_for('admin') }}" class="btn btn-outline-secondary w-100">Clear</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Records Table Card -->
+    <div class="card border-0 shadow-sm rounded-3 bg-white p-4">
+        {% if records %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Timestamp</th>
+                        <th>Patient Name</th>
+                        <th>Patient ID</th>
+                        <th>Diagnosis</th>
+                        <th>Confidence</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in records %}
+                    <tr>
+                        <td class="text-muted font-monospace">#{{ "%06d"|format(r.id) }}</td>
+                        <td>{{ r.timestamp }}</td>
+                        <td class="fw-semibold">{{ r.patient_name }}</td>
+                        <td>{{ r.patient_id }}</td>
+                        <td>
+                            <span class="badge {% if r.prediction == 'Malignant' %}bg-danger{% else %}bg-success{% endif %}">
+                                {{ r.prediction }}
+                            </span>
+                        </td>
+                        <td>{{ "%.2f"|format(r.confidence) }}%</td>
+                        <td class="text-end">
+                            <a href="{{ url_for('result', record_id=r.id) }}" class="btn btn-outline-teal btn-sm me-1" title="View Patient Details">
+                                <i class="bi bi-eye"></i> Details
+                            </a>
+                            <a href="{{ url_for('download_pdf', record_id=r.id) }}" class="btn btn-outline-secondary btn-sm" title="Download PDF Report">
+                                <i class="bi bi-file-earmark-pdf"></i> PDF
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-database-exclamation text-muted fs-1 mb-2"></i>
+            <h5 class="text-muted mb-1">No Diagnostic History Found</h5>
+            <p class="text-muted small">No patient records match the selected filter constraints or the database is currently empty.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

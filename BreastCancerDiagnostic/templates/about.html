@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h3 class="fw-bold text-dark">
+                <i class="bi bi-info-circle text-teal me-2"></i> Clinical Analytics & Model Research
+            </h3>
+            <p class="text-muted">A technical overview of the Wisconsin Breast Cancer Dataset and the machine learning model validation structures.</p>
+        </div>
+    </div>
+
+    <!-- Features & Dataset Explanation -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm rounded-3 bg-white p-4 h-100">
+                <h5 class="fw-bold text-teal mb-3">
+                    <i class="bi bi-bookmark-plus-fill me-1"></i> Dataset Cytological Feature Definitions
+                </h5>
+                <p class="text-muted small">
+                    This system uses the Wisconsin Breast Cancer FNA database. Cell nuclei parameters are computed from digitized images of a fine needle aspirate (FNA) of a breast mass. They describe characteristics of the cell nuclei present in the sample.
+                </p>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover align-middle small">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Nucleus Feature</th>
+                                <th>Clinical Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><b>Radius Mean</b></td>
+                                <td>Mean of distances from center to points on the outer boundary of the nucleus.</td>
+                            </tr>
+                            <tr>
+                                <td><b>Texture Mean</b></td>
+                                <td>Standard deviation of gray-scale intensity values in the nucleus area (measures surface roughness).</td>
+                            </tr>
+                            <tr>
+                                <td><b>Perimeter Mean</b></td>
+                                <td>Total boundary circumference length of the cell nucleus.</td>
+                            </tr>
+                            <tr>
+                                <td><b>Area Mean</b></td>
+                                <td>Total two-dimensional surface area occupied by the cell nucleus.</td>
+                            </tr>
+                            <tr>
+                                <td><b>Smoothness Mean</b></td>
+                                <td>Represents the local variation in nucleus radius lengths.</td>
+                            </tr>
+                            <tr>
+                                <td><b>Compactness Mean</b></td>
+                                <td>Calculated as $Perimeter^2 / Area - 1.0$, measures the circular complexity.</td>
+                            </tr>
+                            <tr>
+                                <td><b>Concavity Mean</b></td>
+                                <td>Severity of concave segments or indentations of the nucleus boundary.</td>
+                            </tr>
+                            <tr>
+                                <td><b>Concave Points Mean</b></td>
+                                <td>Number of concave portions along the nucleus contour line.</td>
+                            </tr>
+                            <tr>
+                                <td><b>Symmetry Mean</b></td>
+                                <td>Symmetry coefficient comparing nuclear hemispheres.</td>
+                            </tr>
+                            <tr>
+                                <td><b>Fractal Dimension Mean</b></td>
+                                <td>Measures boundary complexity using coastline approximation ($coastline - 1.0$).</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm rounded-3 bg-white p-4 h-100">
+                <h5 class="fw-bold text-teal mb-3">
+                    <i class="bi bi-cpu-fill me-1"></i> Classifiers & Model Selection
+                </h5>
+                <div class="accordion" id="modelAccordion">
+                    <div class="accordion-item border-0 border-bottom">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button py-2 bg-transparent shadow-none fw-semibold text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                                Support Vector Machine (RBF Kernel)
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#modelAccordion">
+                            <div class="accordion-body pt-0 small text-muted">
+                                Maps scaled features to multi-dimensional planes to establish optimal margin boundaries between Malignant/Benign nodes. It serves as our production model due to its high F1-Score (0.9383) and validation accuracy (95.6%).
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item border-0 border-bottom">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed py-2 bg-transparent shadow-none fw-semibold text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
+                                Random Forest Classifier
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#modelAccordion">
+                            <div class="accordion-body pt-0 small text-muted">
+                                Generates an ensemble of random decision tree structures to determine voting majorities on classification outputs. Highly robust and handles non-linearities, yielding 93.8% test accuracy.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item border-0 border-bottom">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed py-2 bg-transparent shadow-none fw-semibold text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree">
+                                Logistic Regression
+                            </button>
+                        </h2>
+                        <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#modelAccordion">
+                            <div class="accordion-body pt-0 small text-muted">
+                                Standard linear sigmoid function estimating log-odds probability classes. Yields solid baseline performance (92.9% accuracy) and offers high interpretability through feature coefficients.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item border-0">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed py-2 bg-transparent shadow-none fw-semibold text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour">
+                                Decision Tree
+                            </button>
+                        </h2>
+                        <div id="collapseFour" class="accordion-collapse collapse" data-bs-parent="#modelAccordion">
+                            <div class="accordion-body pt-0 small text-muted">
+                                Uses recursive feature splitting based on information entropy metrics to form a hierarchical leaf system. Highly prone to overfitting but useful as a base proxy, achieving 89.4% accuracy.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-info d-flex align-items-start shadow-sm mt-3 mb-0" role="alert">
+                    <i class="bi bi-lightbulb-fill text-info fs-5 me-2 mt-1"></i>
+                    <div class="small">
+                        <strong>Clinical Metrics Warning:</strong> In oncological diagnostic triage, minimizing <b>False Negatives (Recall)</b> is our absolute priority, as missing malignant cells leads to delayed treatment. SVM achieved the best Recall rate (90.48%) during testing.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feature Plots Grid -->
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm rounded-3 bg-white p-4">
+                <h5 class="fw-bold text-teal mb-3">
+                    <i class="bi bi-grid-3x3-gap-fill me-1"></i> Feature Correlation Map
+                </h5>
+                <img src="{{ url_for('static', filename='images/charts/correlation_heatmap.png') }}" class="img-fluid rounded border border-light" alt="Correlation Heatmap Plot">
+                <p class="text-muted small mt-2 mb-0">
+                    Calculates pairwise Pearson correlation coefficient between features. High multicollinearity can be seen between radius, perimeter, and area mean parameters.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm rounded-3 bg-white p-4">
+                <h5 class="fw-bold text-teal mb-3">
+                    <i class="bi bi-bar-chart-fill me-1"></i> Cell Feature Importance ranks
+                </h5>
+                <img src="{{ url_for('static', filename='images/charts/feature_importance.png') }}" class="img-fluid rounded border border-light" alt="Feature Importance Plot">
+                <p class="text-muted small mt-2 mb-0">
+                    Displays the coefficient proxies for cell feature weights. <b>concave_points_mean</b>, <b>area_mean</b>, and <b>radius_mean</b> display the highest influence in determining malignancy.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

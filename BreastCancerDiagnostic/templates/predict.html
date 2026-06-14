@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-3">
+        <div class="col-12">
+            <h3 class="fw-bold text-dark">
+                <i class="bi bi-shield-check text-teal me-2"></i> Clinical Diagnostic Triage Form
+            </h3>
+            <p class="text-muted">Enter patient metadata and measured cytological mean nuclei values below to evaluate prognosis classification.</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Form Section -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-3 bg-white p-4">
+                <form action="{{ url_for('predict') }}" method="POST" id="predictForm" class="needs-validation" novalidate>
+                    
+                    <!-- Patient Details Group -->
+                    <h5 class="fw-bold text-teal border-bottom pb-2 mb-3">
+                        <i class="bi bi-person-badge-fill me-1"></i> Patient Information
+                    </h5>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label for="patient_name" class="form-label fw-semibold">Patient Name</label>
+                            <input type="text" class="form-control" id="patient_name" name="patient_name" required placeholder="e.g. Jane Doe">
+                            <div class="invalid-feedback">Patient Name is required.</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="patient_id" class="form-label fw-semibold">Patient Record ID / Chart Number</label>
+                            <input type="text" class="form-control" id="patient_id" name="patient_id" required placeholder="e.g. HN-98231">
+                            <div class="invalid-feedback">Patient ID is required.</div>
+                        </div>
+                    </div>
+
+                    <!-- Cytological Mean Metrics -->
+                    <h5 class="fw-bold text-teal border-bottom pb-2 mb-3">
+                        <i class="bi bi-heart-pulse-fill me-1"></i> Cytological Nuclei Metrics (Means)
+                    </h5>
+                    
+                    <div class="row g-3 mb-4">
+                        <!-- Radius -->
+                        <div class="col-md-6">
+                            <label for="radius_mean" class="form-label fw-semibold">Radius Mean (μm)</label>
+                            <input type="number" step="0.001" min="0.001" class="form-control" id="radius_mean" name="radius_mean" required placeholder="Typical: 6.9 - 28.1">
+                            <div class="invalid-feedback">Please enter a valid positive mean radius.</div>
+                        </div>
+                        <!-- Texture -->
+                        <div class="col-md-6">
+                            <label for="texture_mean" class="form-label fw-semibold">Texture Mean (Gray-scale stddev)</label>
+                            <input type="number" step="0.001" min="0.001" class="form-control" id="texture_mean" name="texture_mean" required placeholder="Typical: 9.7 - 39.3">
+                            <div class="invalid-feedback">Please enter a valid positive mean texture.</div>
+                        </div>
+                        <!-- Perimeter -->
+                        <div class="col-md-6">
+                            <label for="perimeter_mean" class="form-label fw-semibold">Perimeter Mean (μm)</label>
+                            <input type="number" step="0.001" min="0.001" class="form-control" id="perimeter_mean" name="perimeter_mean" required placeholder="Typical: 43.8 - 188.5">
+                            <div class="invalid-feedback">Please enter a valid positive mean perimeter.</div>
+                        </div>
+                        <!-- Area -->
+                        <div class="col-md-6">
+                            <label for="area_mean" class="form-label fw-semibold">Area Mean (μm²)</label>
+                            <input type="number" step="0.01" min="0.01" class="form-control" id="area_mean" name="area_mean" required placeholder="Typical: 143.5 - 2501.0">
+                            <div class="invalid-feedback">Please enter a valid positive mean area.</div>
+                        </div>
+                        <!-- Smoothness -->
+                        <div class="col-md-6">
+                            <label for="smoothness_mean" class="form-label fw-semibold">Smoothness Mean (Local variation)</label>
+                            <input type="number" step="0.0001" min="0.0001" class="form-control" id="smoothness_mean" name="smoothness_mean" required placeholder="Typical: 0.05 - 0.16">
+                            <div class="invalid-feedback">Please enter a valid positive mean smoothness.</div>
+                        </div>
+                        <!-- Compactness -->
+                        <div class="col-md-6">
+                            <label for="compactness_mean" class="form-label fw-semibold">Compactness Mean (perim²/area - 1)</label>
+                            <input type="number" step="0.0001" min="0.0001" class="form-control" id="compactness_mean" name="compactness_mean" required placeholder="Typical: 0.02 - 0.35">
+                            <div class="invalid-feedback">Please enter a valid positive mean compactness.</div>
+                        </div>
+                        <!-- Concavity -->
+                        <div class="col-md-6">
+                            <label for="concavity_mean" class="form-label fw-semibold">Concavity Mean (Severity of contour curves)</label>
+                            <input type="number" step="0.0001" min="0.0" class="form-control" id="concavity_mean" name="concavity_mean" required placeholder="Typical: 0.0 - 0.43">
+                            <div class="invalid-feedback">Please enter a valid concavity value (&ge; 0).</div>
+                        </div>
+                        <!-- Concave Points -->
+                        <div class="col-md-6">
+                            <label for="concave_points_mean" class="form-label fw-semibold">Concave Points Mean (Contour portions)</label>
+                            <input type="number" step="0.0001" min="0.0" class="form-control" id="concave_points_mean" name="concave_points_mean" required placeholder="Typical: 0.0 - 0.20">
+                            <div class="invalid-feedback">Please enter a valid concave points value (&ge; 0).</div>
+                        </div>
+                        <!-- Symmetry -->
+                        <div class="col-md-6">
+                            <label for="symmetry_mean" class="form-label fw-semibold">Symmetry Mean</label>
+                            <input type="number" step="0.0001" min="0.0001" class="form-control" id="symmetry_mean" name="symmetry_mean" required placeholder="Typical: 0.11 - 0.30">
+                            <div class="invalid-feedback">Please enter a valid positive mean symmetry.</div>
+                        </div>
+                        <!-- Fractal Dimension -->
+                        <div class="col-md-6">
+                            <label for="fractal_dimension_mean" class="form-label fw-semibold">Fractal Dimension Mean</label>
+                            <input type="number" step="0.0001" min="0.0001" class="form-control" id="fractal_dimension_mean" name="fractal_dimension_mean" required placeholder="Typical: 0.05 - 0.10">
+                            <div class="invalid-feedback">Please enter a valid positive mean fractal dimension.</div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid d-md-flex justify-content-md-end gap-2">
+                        <button type="reset" class="btn btn-outline-secondary px-4">Clear Fields</button>
+                        <button type="submit" class="btn btn-teal px-5 fw-bold">
+                            <i class="bi bi-search-heart me-1"></i> Analyze prognosis
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+        <!-- Sidebar Guidelines -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-3 bg-white p-3 mb-3 border-start border-teal border-4">
+                <h6 class="fw-bold text-dark mb-2">
+                    <i class="bi bi-info-circle-fill text-teal me-1"></i> Clinical Triage Reference Guide
+                </h6>
+                <p class="small text-muted mb-0">
+                    The values entered represent average cell nuclei parameters derived from clinical fine needle aspirate (FNA) biopsy samples.
+                </p>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-3 bg-white">
+                <div class="card-header bg-transparent border-0 pt-4 px-4">
+                    <h6 class="fw-bold mb-0 text-dark">
+                        <i class="bi bi-bookmark-fill text-warning me-1"></i> Expected Parameter Ranges
+                    </h6>
+                </div>
+                <div class="card-body px-4 pb-4">
+                    <div class="table-responsive">
+                        <table class="table table-sm table-borderless small mb-0">
+                            <thead>
+                                <tr class="border-bottom">
+                                    <th class="ps-0">Cell Feature</th>
+                                    <th class="text-end pe-0">Normal Dataset Bounds</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="ps-0">Radius Mean</td>
+                                    <td class="text-end pe-0 fw-semibold">6.98 - 28.11 μm</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-0">Texture Mean</td>
+                                    <td class="text-end pe-0 fw-semibold">9.71 - 39.28 grayscale</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-0">Perimeter Mean</td>
+                                    <td class="text-end pe-0 fw-semibold">43.79 - 188.50 μm</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-0">Area Mean</td>
+                                    <td class="text-end pe-0 fw-semibold">143.50 - 2501.00 μm²</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-0">Smoothness Mean</td>
+                                    <td class="text-end pe-0 fw-semibold">0.053 - 0.163</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-0">Compactness Mean</td>
+                                    <td class="text-end pe-0 fw-semibold">0.019 - 0.345</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-0">Concavity Mean</td>
+                                    <td class="text-end pe-0 fw-semibold">0.000 - 0.427</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-0">Concave Points Mean</td>
+                                    <td class="text-end pe-0 fw-semibold">0.000 - 0.201</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-0">Symmetry Mean</td>
+                                    <td class="text-end pe-0 fw-semibold">0.106 - 0.304</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-0">Fractal Dimension</td>
+                                    <td class="text-end pe-0 fw-semibold">0.050 - 0.097</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
